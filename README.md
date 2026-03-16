@@ -1,37 +1,3 @@
-Update README.md for this project by replacing its content with a cleaner, shorter, more natural Chinese version.
-
-Project name:
-《潜水员戴夫》活动运营决策模拟器
-
-Goal:
-Rewrite README.md so it reads like a real project README written by someone who actually built the project and cares about the topic.
-The tone should feel natural, grounded, and modest.
-Do NOT make it sound like AI-generated writing, corporate marketing copy, or a formal report.
-
-Important tone constraints:
-1. Do not repeatedly mention identity such as 学生 / 新人 / 没入行 / 求职者.
-2. Do not use empty buzzwords or template-like wording.
-3. Avoid phrases like:
-   - 旨在
-   - 围绕……展开
-   - 通过……实现……
-   - 形成闭环
-   - 多维度分析
-   - 赋能
-   - 提供支撑
-4. Write in plain, natural, professional Simplified Chinese.
-5. Keep the writing concise and readable.
-6. Keep the tone like a serious beginner with strong interest and real thought, but do not explicitly state that identity.
-
-Requirements:
-1. Overwrite README.md directly.
-2. Keep the structure clean and suitable for GitHub preview.
-3. Use the following markdown content as the base version, but lightly polish wording if needed to reduce AI tone while keeping meaning unchanged.
-4. Do not add exaggerated claims.
-5. Keep all screenshot paths unchanged.
-
-Use this markdown:
-
 # 《潜水员戴夫》活动运营决策模拟器
 
 ## 项目简介
