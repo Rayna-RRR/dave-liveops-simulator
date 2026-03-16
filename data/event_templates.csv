@@ -1,0 +1,5 @@
+event_id,event_name,event_type,target_segment,reward_cost_level,expected_activity_boost,expected_retention_boost,expected_conversion_boost,inflation_risk
+EVT001,tuna_festival,activity_driver,active_non_payers,medium,0.14,0.03,0.01,0.31
+EVT002,vip_visit,monetization_push,high_value_payers,high,0.05,0.02,0.06,0.26
+EVT003,ingredient_subsidy,economy_stimulus,new_players,high,0.09,0.03,0.02,0.67
+EVT004,returner_pack,reactivation_offer,churn_risk_players,medium,0.08,0.08,0.02,0.37
