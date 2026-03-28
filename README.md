@@ -1,5 +1,11 @@
 # 《潜水员戴夫》活动运营决策模拟器
+## 在线访问
 
+在线演示：
+https://dave-liveops-simulator-bd9u9gttoxxcywdw4pshkc.streamlit.app/
+
+GitHub 仓库：
+https://github.com/Rayna-RRR/dave-liveops-simulator
 ## 项目简介
 这是一个基于《潜水员戴夫》题材假设场景搭建的活动运营分析原型。项目把活动运营里常见的几个判断动作串成一条可交互的页面链路，用来展示我对用户分层、活动配置、方案比较和结果复盘的理解。
 
