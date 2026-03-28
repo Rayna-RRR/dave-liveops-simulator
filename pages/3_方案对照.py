@@ -87,17 +87,44 @@ def infer_focus_label(raw_focus):
     return alias_map.get(raw_focus, "综合表现")
 
 
-def on_comparison_baseline_change():
+def get_target_variant_options(variant_options, baseline_variant):
+    """Return the valid target variants for the current baseline."""
+    return [variant for variant in variant_options if variant != baseline_variant]
+
+
+def resolve_target_variant(variant_options, baseline_variant, *candidates):
+    """Resolve a valid target variant from business-state candidates."""
+    target_options = get_target_variant_options(variant_options, baseline_variant)
+    for candidate in candidates:
+        if candidate in target_options:
+            return candidate
+    return target_options[0] if target_options else baseline_variant
+
+
+def on_comparison_baseline_change(variant_options):
     """Push the baseline radio selection back into business state."""
+    selected_baseline = st.session_state.get("comparison_baseline_widget")
+    selected_target = resolve_target_variant(
+        variant_options,
+        selected_baseline,
+        st.session_state.get("comparison_target"),
+        st.session_state.get("selected_plan"),
+        st.session_state.get("comparison_target_widget"),
+    )
+    st.session_state["pending_comparison_baseline_widget"] = selected_baseline
+    st.session_state["pending_comparison_target_widget"] = selected_target
     set_interaction_state(
         source="方案对照",
-        comparison_baseline=st.session_state.get("comparison_baseline_widget"),
+        comparison_baseline=selected_baseline,
+        comparison_target=selected_target,
+        selected_plan=selected_target,
     )
 
 
 def on_comparison_target_change():
     """Push the target radio selection back into business state."""
     selected_target = st.session_state.get("comparison_target_widget")
+    st.session_state["pending_comparison_target_widget"] = selected_target
     set_interaction_state(
         source="方案对照",
         comparison_target=selected_target,
@@ -245,13 +272,9 @@ baseline_variant, target_variant = ensure_comparison_pair(
     preferred_target=target_default,
 )
 variant_options = filtered_df["variant"].tolist()
+target_variant_options = get_target_variant_options(variant_options, baseline_variant)
 sync_widget_state("comparison_baseline_widget", variant_options, baseline_variant)
-sync_widget_state("comparison_target_widget", variant_options, target_variant)
-if st.session_state["comparison_target_widget"] == st.session_state["comparison_baseline_widget"]:
-    st.session_state["comparison_target_widget"] = next(
-        (variant for variant in variant_options if variant != st.session_state["comparison_baseline_widget"]),
-        st.session_state["comparison_baseline_widget"],
-    )
+sync_widget_state("comparison_target_widget", target_variant_options, target_variant)
 sync_widget_state("comparison_focus_widget", FOCUS_OPTIONS, st.session_state["selected_metric_focus"])
 
 with focus_col1:
@@ -262,12 +285,13 @@ with focus_col1:
         horizontal=True,
         key="comparison_baseline_widget",
         on_change=on_comparison_baseline_change,
+        args=(variant_options,),
     )
 
 with focus_col2:
     target_variant = st.radio(
         "当前关注方案",
-        variant_options,
+        target_variant_options,
         format_func=lambda variant_key: VARIANT_LABELS.get(variant_key, variant_key),
         horizontal=True,
         key="comparison_target_widget",
@@ -282,9 +306,6 @@ with focus_col3:
         key="comparison_focus_widget",
         on_change=on_comparison_focus_change,
     )
-
-if target_variant == baseline_variant:
-    target_variant = next((variant for variant in variant_options if variant != baseline_variant), baseline_variant)
 
 if not had_comparison_pair or compare_pair_rebuilt:
     render_status_row("当前对照已恢复为默认基准与关注方案。")
@@ -380,8 +401,21 @@ for column, row in zip(plan_cols, variant_rows):
                     use_container_width=True,
                     disabled=variant_key == baseline_variant,
                 ):
+                    replacement_target = resolve_target_variant(
+                        variant_options,
+                        variant_key,
+                        target_variant,
+                        st.session_state.get("comparison_target"),
+                        st.session_state.get("selected_plan"),
+                    )
                     st.session_state["pending_comparison_baseline_widget"] = variant_key
-                    set_interaction_state(source="方案对照", comparison_baseline=variant_key)
+                    st.session_state["pending_comparison_target_widget"] = replacement_target
+                    set_interaction_state(
+                        source="方案对照",
+                        comparison_baseline=variant_key,
+                        comparison_target=replacement_target,
+                        selected_plan=replacement_target,
+                    )
                     st.rerun()
             with action_col2:
                 if st.button(
